@@ -11,8 +11,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div 
-      className={`border rounded-lg p-4 shadow-md transition-transform duration-200 ${
-        isHovered ? 'transform scale-105' : ''
+      className={`bg-white rounded-xl p-6 shadow-lg transition-all duration-300 ${
+        isHovered ? 'transform scale-105 shadow-xl' : ''
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -33,7 +33,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <span className="text-lg font-bold text-green-600">${product.price}</span>
       </div>
       <button 
-        className="w-full mt-4 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+        className="w-full mt-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-300 transform hover:-translate-y-1 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         onClick={() => alert('Added to cart!')}
       >
         Add to Cart

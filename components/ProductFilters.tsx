@@ -1,4 +1,3 @@
-
 interface ProductFiltersProps {
   onSearch: (query: string) => void;
   onCategoryFilter: (category: string) => void;
@@ -7,7 +6,8 @@ interface ProductFiltersProps {
 
 export default function ProductFilters({ onSearch, onCategoryFilter, onPriceSort }: ProductFiltersProps) {
   return (
-    <div className="mb-8 space-y-4">
+    <div className="mb-8 bg-white p-6 rounded-xl shadow-lg">
+      <h3 className="text-xl font-semibold mb-4 text-gray-800">Filters</h3>
       <div className="flex flex-col md:flex-row gap-4">
         <input
           type="text"

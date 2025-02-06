@@ -1,4 +1,3 @@
-
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import Layout from '../../components/Layout'
@@ -67,14 +66,19 @@ const ProductsPage: NextPage = () => {
 
   return (
     <Layout title="Products | Marketplace">
-      <h1 className="text-3xl font-bold mb-8">Available Products</h1>
-      
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">Discover Amazing Products</h1>
+          <p className="text-gray-600 text-lg">Browse through our curated collection of unique items</p>
+        </div>
+      </div>
+
       <ProductFilters
         onSearch={handleSearch}
         onCategoryFilter={handleCategoryFilter}
         onPriceSort={handlePriceSort}
       />
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {filteredProducts.map(product => (
           <ProductCard key={product.id} product={product} />
