@@ -1,27 +1,10 @@
+
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Product } from '../../types/marketplace'
 import { ApiError, handleApiError } from '../../utils/errorHandler'
+import { mockProducts } from '../../utils/testUtils'
 
-const products: Product[] = [
-  {
-    id: '1',
-    name: 'Smartphone',
-    description: 'Latest model smartphone with advanced features',
-    price: 699.99,
-    category: 'Electronics',
-    sellerId: 'seller1',
-    imageUrl: '/images/smartphone.jpg'
-  },
-  {
-    id: '2',
-    name: 'Laptop',
-    description: 'Powerful laptop for work and gaming',
-    price: 1299.99,
-    category: 'Electronics',
-    sellerId: 'seller2',
-    imageUrl: '/images/laptop.jpg'
-  }
-]
+const products = mockProducts;
 
 export default async function handler(
   req: NextApiRequest,
@@ -30,32 +13,42 @@ export default async function handler(
   try {
     switch (req.method) {
       case 'GET':
-        const { category, minPrice, maxPrice } = req.query;
+        const { minPrice, maxPrice } = req.query;
+        const categoryFilter = req.query.category as string;
         let filteredProducts = [...products];
-
-        if (category) {
-          filteredProducts = filteredProducts.filter(p => p.category === category);
+        
+        if (categoryFilter) {
+          filteredProducts = filteredProducts.filter(p => p.category === categoryFilter);
         }
-
+        
         if (minPrice) {
           filteredProducts = filteredProducts.filter(p => p.price >= Number(minPrice));
         }
-
+        
         if (maxPrice) {
           filteredProducts = filteredProducts.filter(p => p.price <= Number(maxPrice));
         }
-
+        
         return res.status(200).json(filteredProducts);
 
       case 'POST':
-        const newProduct = req.body;
+        const product = req.body as Product;
+        if (!product.name || !product.price) {
+          throw new ApiError(400, 'Missing required fields');
+        }
+        const newProduct = {
+          ...product,
+          id: `prod-${Date.now()}`
+        };
         products.push(newProduct);
         return res.status(201).json(newProduct);
 
       default:
-        return res.status(405).json({ message: 'Method not allowed' });
+        res.setHeader('Allow', ['GET', 'POST']);
+        throw new ApiError(405, `Method ${req.method} Not Allowed`);
     }
   } catch (error) {
-    handleApiError(error as ApiError, res);
+    const { statusCode, message } = handleApiError(error);
+    return res.status(statusCode).json({ message });
   }
 }
