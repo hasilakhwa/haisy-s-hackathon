@@ -1,5 +1,5 @@
 
-module.exports = {
+export const config = {
   development: {
     url: 'http://0.0.0.0:3000',
     featureFlags: {
