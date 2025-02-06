@@ -6,7 +6,10 @@
     "dev": "next dev --port 3000 --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start --port 3000 --hostname 0.0.0.0",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-deploy": "node scripts/deployment-check.js",
+    "deploy:staging": "npm run check-deploy && NEXT_PUBLIC_ENVIRONMENT=staging npm run build",
+    "deploy:prod": "npm run check-deploy && NEXT_PUBLIC_ENVIRONMENT=production npm run build"
   },
   "dependencies": {
     "next": "^14.1.0",
