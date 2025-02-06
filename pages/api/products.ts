@@ -1,8 +1,8 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Product } from '../../types/marketplace'
+import { ApiError, handleApiError } from '../../utils/errorHandler'
 
-// Mock data - replace with actual database
 const products: Product[] = [
   {
     id: '1',
@@ -24,16 +24,55 @@ const products: Product[] = [
   }
 ]
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Product[] | Product | { message: string }>
+  res: NextApiResponse
 ) {
-  if (req.method === 'GET') {
-    res.status(200).json(products)
-  } else if (req.method === 'POST') {
-    // Add product validation and creation logic here
-    res.status(201).json({ message: 'Product created' })
-  } else {
-    res.status(405).json({ message: 'Method not allowed' })
+  try {
+    switch (req.method) {
+      case 'GET':
+        const { category, minPrice, maxPrice } = req.query;
+        let filteredProducts = [...products];
+        
+        if (category) {
+          filteredProducts = filteredProducts.filter(p => p.category === category);
+        }
+        
+        if (minPrice) {
+          filteredProducts = filteredProducts.filter(p => p.price >= Number(minPrice));
+        }
+        
+        if (maxPrice) {
+          filteredProducts = filteredProducts.filter(p => p.price <= Number(maxPrice));
+        }
+        
+        return res.status(200).json(filteredProducts);
+
+      case 'POST':
+        const { name, description, price, category, sellerId } = req.body;
+        
+        if (!name || !price || !sellerId) {
+          throw new ApiError(400, 'Missing required fields');
+        }
+        
+        const newProduct: Product = {
+          id: Date.now().toString(),
+          name,
+          description,
+          price: Number(price),
+          sellerId,
+          category,
+          imageUrl: req.body.imageUrl
+        };
+        
+        products.push(newProduct);
+        return res.status(201).json(newProduct);
+
+      default:
+        throw new ApiError(405, 'Method not allowed');
+    }
+  } catch (error) {
+    const { statusCode, message } = handleApiError(error);
+    res.status(statusCode).json({ error: message });
   }
 }
